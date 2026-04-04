@@ -10,58 +10,97 @@ public class LoggerSDK {
 
     private final String serverUrl;
     private final String appName;
+    private final String environment;
+    private final String module;
+    private final String apiKey;
 
-    // Batch storage
     private final List<String> logQueue = Collections.synchronizedList(new ArrayList<>());
-
-    // Scheduler (runs every few seconds)
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
-    // Config
-    private final int batchSize = 5;
-    private final int maxRetries = 3;
+    private final int batchSize;
+    private final int maxRetries;
 
-    public LoggerSDK(String serverUrl, String appName) {
+    public LoggerSDK(String serverUrl, String appName, String environment,
+                     String module, String apiKey) {
+        this(serverUrl, appName, environment, module, apiKey, 5, 3);
+    }
+
+    public LoggerSDK(String serverUrl, String appName, String environment,
+                     String module, String apiKey, int batchSize, int maxRetries) {
+
         this.serverUrl = serverUrl;
         this.appName = appName;
+        this.environment = environment;
+        this.module = module;
+        this.apiKey = apiKey;
+        this.batchSize = batchSize;
+        this.maxRetries = maxRetries;
 
-        // Start batch sender every 5 seconds
+        // Schedule batch flush every 5 sec
         scheduler.scheduleAtFixedRate(this::flushLogs, 5, 5, TimeUnit.SECONDS);
+
+        // Shutdown hook
+        Runtime.getRuntime().addShutdownHook(new Thread(this::flushLogs));
+
+        // Crash handler (VERY IMPORTANT)
+        Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> {
+            fatal("Unhandled exception: " + throwable.getMessage(), throwable);
+            flushLogs();
+        });
     }
 
-    // Public methods
+    // ---------------- LOG METHODS ----------------
+
     public void info(String message) {
-        addLog("INFO", message);
-    }
-
-    public void error(String message) {
-        addLog("ERROR", message);
+        addLog(LogLevel.INFO, message, null);
     }
 
     public void warn(String message) {
-        addLog("WARN", message);
+        addLog(LogLevel.WARN, message, null);
     }
 
     public void debug(String message) {
-        addLog("DEBUG", message);
+        addLog(LogLevel.DEBUG, message, null);
     }
 
-    // Add log to queue
-    private void addLog(String level, String message) {
-        String json = String.format(
-                "{\"level\":\"%s\",\"message\":\"%s\",\"appName\":\"%s\"}",
-                level, message, appName
+    public void error(String message, Throwable t) {
+        addLog(LogLevel.ERROR, message, t);
+    }
+
+    public void fatal(String message, Throwable t) {
+        addLog(LogLevel.FATAL, message, t);
+    }
+
+    // ---------------- CORE LOGIC ----------------
+
+    private void addLog(LogLevel level, String message, Throwable t) {
+
+        String stackTrace = null;
+
+        if (t != null) {
+            StringBuilder sb = new StringBuilder();
+            for (StackTraceElement el : t.getStackTrace()) {
+                sb.append(el.toString()).append("\\n");
+            }
+            stackTrace = sb.toString();
+        }
+
+        LogRequest log = new LogRequest(
+                level.name(),
+                message,
+                appName,
+                environment,
+                module,
+                stackTrace
         );
 
-        logQueue.add(json);
+        logQueue.add(log.toJson());
 
-        // If batch size reached → send immediately
         if (logQueue.size() >= batchSize) {
             flushLogs();
         }
     }
 
-    // Send batch
     private void flushLogs() {
         if (logQueue.isEmpty()) return;
 
@@ -74,7 +113,6 @@ public class LoggerSDK {
         sendWithRetry(batch);
     }
 
-    // Retry logic
     private void sendWithRetry(List<String> batch) {
         int attempt = 0;
 
@@ -84,24 +122,24 @@ public class LoggerSDK {
                 return;
             } catch (Exception e) {
                 attempt++;
-                System.out.println("Batch retry " + attempt);
-
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException ignored) {}
             }
         }
 
-        System.out.println("Batch failed after retries");
+        System.err.println("Batch failed after retries");
     }
 
-    // Send HTTP batch
     private void sendBatch(List<String> batch) throws Exception {
         URL url = new URL(serverUrl + "/logs/batch");
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
         conn.setRequestMethod("POST");
         conn.setRequestProperty("Content-Type", "application/json");
+        conn.setRequestProperty("x-api-key", apiKey);
+        conn.setConnectTimeout(3000);
+        conn.setReadTimeout(3000);
         conn.setDoOutput(true);
 
         String jsonArray = "[" + String.join(",", batch) + "]";
@@ -111,10 +149,10 @@ public class LoggerSDK {
             os.flush();
         }
 
-        int responseCode = conn.getResponseCode();
+        int code = conn.getResponseCode();
 
-        if (responseCode != 200 && responseCode != 201) {
-            throw new RuntimeException("HTTP Error: " + responseCode);
+        if (code != 200 && code != 201) {
+            throw new RuntimeException("HTTP Error: " + code);
         }
     }
 }
