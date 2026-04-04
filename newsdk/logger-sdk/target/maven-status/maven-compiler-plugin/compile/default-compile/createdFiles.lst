@@ -1,0 +1,11 @@
+com\logger\model\LogLevel.class
+com\logger\queue\LogQueue.class
+com\logger\model\Metadata.class
+com\logger\config\SDKConfig.class
+com\logger\model\LogEvent.class
+com\logger\sender\HttpClient.class
+com\logger\config\SDKConfig$Builder.class
+com\logger\LoggerSDK.class
+com\logger\crash\CrashHandler.class
+com\logger\util\StackTraceUtil.class
+com\logger\sender\LogSender.class
