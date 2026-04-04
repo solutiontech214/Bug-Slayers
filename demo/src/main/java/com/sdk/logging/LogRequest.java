@@ -4,30 +4,52 @@ import java.time.LocalDateTime;
 
 public class LogRequest {
 
-    private String level;
-    private String message;
-    private String appName;
-    private String environment;
-    private String module;
-    private String stackTrace;
-    private LocalDateTime timestamp;
+    private final String level;
+    private final String message;
+    private final String projectId;
+    private final String moduleId;
+    private final String submoduleId;
+    private final String environment;
+    private final String stackTrace;
+    private final LocalDateTime timestamp;
 
-    public LogRequest(String level, String message, String appName,
-                      String environment, String module, String stackTrace) {
+    public LogRequest(String level,
+                      String message,
+                      String projectId,
+                      String moduleId,
+                      String submoduleId,
+                      String environment,
+                      String stackTrace) {
+
         this.level = level;
         this.message = message;
-        this.appName = appName;
+        this.projectId = projectId;
+        this.moduleId = moduleId;
+        this.submoduleId = submoduleId;
         this.environment = environment;
-        this.module = module;
         this.stackTrace = stackTrace;
         this.timestamp = LocalDateTime.now();
     }
 
+    // 🔥 Safe JSON escape (VERY IMPORTANT)
+    private String escape(String str) {
+        if (str == null) return "";
+        return str
+                .replace("\"", "'")
+                .replace("\n", " ")
+                .replace("\r", " ");
+    }
+
     public String toJson() {
         return String.format(
-                "{\"level\":\"%s\",\"message\":\"%s\",\"appName\":\"%s\",\"environment\":\"%s\",\"module\":\"%s\",\"stackTrace\":\"%s\",\"timestamp\":\"%s\"}",
-                level, message, appName, environment, module,
-                stackTrace == null ? "" : stackTrace.replace("\"", "'"),
+                "{\"level\":\"%s\",\"message\":\"%s\",\"projectId\":\"%s\",\"moduleId\":\"%s\",\"submoduleId\":\"%s\",\"environment\":\"%s\",\"stackTrace\":\"%s\",\"timestamp\":\"%s\"}",
+                escape(level),
+                escape(message),
+                escape(projectId),
+                escape(moduleId),
+                escape(submoduleId),
+                escape(environment),
+                escape(stackTrace),
                 timestamp.toString()
         );
     }

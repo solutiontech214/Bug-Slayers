@@ -1,6 +1,6 @@
 package com.sdk.logging;
 
-import java.io.OutputStream;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.*;
@@ -9,10 +9,13 @@ import java.util.concurrent.*;
 public class LoggerSDK {
 
     private final String serverUrl;
-    private final String appName;
-    private final String environment;
-    private final String module;
     private final String apiKey;
+
+    // Auto-loaded config
+    private String projectId;
+    private String moduleId;
+    private String submoduleId;
+    private String environment;
 
     private final List<String> logQueue = Collections.synchronizedList(new ArrayList<>());
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
@@ -20,36 +23,90 @@ public class LoggerSDK {
     private final int batchSize;
     private final int maxRetries;
 
-    public LoggerSDK(String serverUrl, String appName, String environment,
-                     String module, String apiKey) {
-        this(serverUrl, appName, environment, module, apiKey, 5, 3);
+    // ---------------- CONSTRUCTOR ----------------
+
+    public LoggerSDK(String serverUrl, String apiKey) {
+        this(serverUrl, apiKey, 5, 3);
     }
 
-    public LoggerSDK(String serverUrl, String appName, String environment,
-                     String module, String apiKey, int batchSize, int maxRetries) {
-
+    public LoggerSDK(String serverUrl, String apiKey, int batchSize, int maxRetries) {
         this.serverUrl = serverUrl;
-        this.appName = appName;
-        this.environment = environment;
-        this.module = module;
         this.apiKey = apiKey;
         this.batchSize = batchSize;
         this.maxRetries = maxRetries;
 
-        // Schedule batch flush every 5 sec
+        // 🔥 Load config from backend
+        loadConfig();
+
+        // Start batch scheduler
         scheduler.scheduleAtFixedRate(this::flushLogs, 5, 5, TimeUnit.SECONDS);
 
         // Shutdown hook
         Runtime.getRuntime().addShutdownHook(new Thread(this::flushLogs));
 
-        // Crash handler (VERY IMPORTANT)
+        // Crash handler
         Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> {
-            fatal("Unhandled exception: " + throwable.getMessage(), throwable);
+            System.err.println("FATAL ERROR: " + throwable.getMessage());
+            addLog(LogLevel.FATAL, "Unhandled exception", throwable);
             flushLogs();
         });
     }
 
-    // ---------------- LOG METHODS ----------------
+    // ---------------- CONFIG FETCH ----------------
+
+    private void loadConfig() {
+        try {
+            URL url = new URL(serverUrl + "/config");
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+
+            conn.setRequestMethod("GET");
+            conn.setRequestProperty("x-api-key", apiKey);
+            conn.setConnectTimeout(3000);
+            conn.setReadTimeout(3000);
+
+            if (conn.getResponseCode() != 200) {
+                throw new RuntimeException("Failed to fetch config");
+            }
+
+            BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(conn.getInputStream())
+            );
+
+            StringBuilder response = new StringBuilder();
+            String line;
+
+            while ((line = reader.readLine()) != null) {
+                response.append(line);
+            }
+
+            parseConfig(response.toString());
+
+        } catch (Exception e) {
+            throw new RuntimeException("SDK config load failed: " + e.getMessage());
+        }
+    }
+
+    // Simple JSON parser (lightweight)
+    private void parseConfig(String json) {
+        this.projectId = extract(json, "projectId");
+        this.moduleId = extract(json, "moduleId");
+        this.submoduleId = extract(json, "submoduleId");
+        this.environment = extract(json, "environment");
+    }
+
+    private String extract(String json, String key) {
+        String pattern = "\"" + key + "\":\"";
+        int start = json.indexOf(pattern);
+
+        if (start == -1) return "";
+
+        start += pattern.length();
+        int end = json.indexOf("\"", start);
+
+        return json.substring(start, end);
+    }
+
+    // ---------------- PUBLIC LOG METHODS ----------------
 
     public void info(String message) {
         addLog(LogLevel.INFO, message, null);
@@ -80,7 +137,7 @@ public class LoggerSDK {
         if (t != null) {
             StringBuilder sb = new StringBuilder();
             for (StackTraceElement el : t.getStackTrace()) {
-                sb.append(el.toString()).append("\\n");
+                sb.append(el.toString()).append(" | ");
             }
             stackTrace = sb.toString();
         }
@@ -88,9 +145,10 @@ public class LoggerSDK {
         LogRequest log = new LogRequest(
                 level.name(),
                 message,
-                appName,
+                projectId,
+                moduleId,
+                submoduleId,
                 environment,
-                module,
                 stackTrace
         );
 
@@ -105,6 +163,7 @@ public class LoggerSDK {
         if (logQueue.isEmpty()) return;
 
         List<String> batch;
+
         synchronized (logQueue) {
             batch = new ArrayList<>(logQueue);
             logQueue.clear();
@@ -146,7 +205,6 @@ public class LoggerSDK {
 
         try (OutputStream os = conn.getOutputStream()) {
             os.write(jsonArray.getBytes());
-            os.flush();
         }
 
         int code = conn.getResponseCode();
