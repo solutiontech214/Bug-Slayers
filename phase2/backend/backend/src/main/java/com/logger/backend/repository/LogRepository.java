@@ -8,6 +8,6 @@ import java.util.List;
 public interface LogRepository extends JpaRepository<LogEntity, Long> {
 
     List<LogEntity> findByProjectId(String projectId);
-    List<LogEntity> findByLevel(String level);
+
     List<LogEntity> findByModuleId(String moduleId);
 }

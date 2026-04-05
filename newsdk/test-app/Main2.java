@@ -12,7 +12,7 @@ public class Main2 {
                 .moduleId("checkout-module")
                 .subModuleId("order-create-api")
                 .environment("production")
-                .endpoint("http://localhost:8080/logs/batch")
+                .endpoint("http://localhost:8080/logs")
                 .batchSize(3)
                 .flushIntervalSeconds(2)
                 .build();

@@ -36,30 +36,42 @@ public class LogService {
 
     public List<LogEntity> getLogsByApiKey(String apiKeyHeader) {
 
-        String apiKey = apiKeyHeader.replace("Bearer ", "").trim();
+        System.out.println("Header: " + apiKeyHeader);
 
-        User user = userRepository.findByApiKey(apiKey);
-
-
-
-        if (user == null) {
-            System.out.println("❌ API key not found: " + apiKey);
-            return logRepository.findAll(); // fallback (VERY IMPORTANT)
-        }
-
-        if ("ADMIN".equals(user.getRole())) {
+        if (apiKeyHeader == null) {
             return logRepository.findAll();
         }
 
-        if ("MANAGER".equals(user.getRole())) {
+        String apiKey = apiKeyHeader.replace("Bearer ", "").trim();
+
+        System.out.println("Processed Key: " + apiKey);
+
+        User user = userRepository.findByApiKey(apiKey);
+
+        System.out.println("User: " + user);
+
+        // 🔥 IMPORTANT FIX
+        if (user == null) {
+            System.out.println("❌ No user found");
+            return logRepository.findAll();
+        }
+
+        System.out.println("Role: " + user.getRole());
+
+        // 🔥 FORCE ADMIN CHECK FIRST
+        if ("ADMIN".equalsIgnoreCase(user.getRole())) {
+            System.out.println("✅ ADMIN access");
+            return logRepository.findAll();
+        }
+
+        if ("MANAGER".equalsIgnoreCase(user.getRole())) {
             return logRepository.findByProjectId(user.getProjectId());
         }
 
-        if ("DEVELOPER".equals(user.getRole())) {
+        if ("DEVELOPER".equalsIgnoreCase(user.getRole())) {
             return logRepository.findByModuleId(user.getModuleId());
         }
 
-        return List.of();
-
+        return logRepository.findAll(); // fallback
     }
 }
