@@ -31,4 +31,14 @@ public class LogController {
 
         return "Log saved successfully";
     }
+    // ✅ BATCH: Receive multiple logs from SDK
+    @PostMapping("/batch")
+    public String receiveLogs(@RequestBody java.util.List<LogRequest> requests,
+                              @RequestHeader(value = "Authorization", required = false) String authHeader) {
+        System.out.println("\uD83D\uDCE9 Batch logs received: " + requests.size());
+        for (LogRequest request : requests) {
+            logService.saveLog(request);
+        }
+        return "Batch logs saved successfully";
+    }
 }
