@@ -1,59 +1,51 @@
 package com.logger.backend.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
-import org.hibernate.annotations.Formula;
-import java.time.LocalDateTime;
 
 @Entity
-@Table(
-    name = "logs",
-    indexes = {
-        @Index(name = "idx_logs_level", columnList = "level"),
-        @Index(name = "idx_logs_sub_module_id", columnList = "sub_module_id"),
-        @Index(name = "idx_logs_project_id", columnList = "project_id"),
-        @Index(name = "idx_logs_timestamp", columnList = "timestamp")
-    }
-)
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Table(name = "logs")
 public class LogEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(columnDefinition = "TEXT", nullable = false)
     private String message;
-
-    @Column(nullable = false, length = 10)
-    private String level; // INFO, WARN, ERROR, FATAL
-
-    private long timestamp;
-
-    @Column(length = 50)
-    private String environment;
-
-    @Column(name = "project_id", length = 100)
-    private String projectId;
-
-    @Column(name = "module_id", length = 100)
-    private String moduleId;
-
-    @Column(name = "sub_module_id", length = 100)
-    private String subModuleId;
-
-    // Multi-line stack trace for ERROR/FATAL
-    @Column(name = "stack_trace", columnDefinition = "TEXT")
+    private String level;
     private String stackTrace;
 
-    @Column(name = "created_at")
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private String projectId;
+    private String moduleId;
+    private String subModuleId;
+    private String environment;
 
-    // NOTE: GIN index on search_vector is created via SQL script (schema.sql)
-    // PostgreSQL Full-Text Search vector column
+    private Long timestamp;
 
+    // 🔥 GETTERS (IMPORTANT FOR JSON)
+
+    public Long getId() { return id; }
+
+    public String getMessage() { return message; }
+    public String getLevel() { return level; }
+    public String getStackTrace() { return stackTrace; }
+
+    public String getProjectId() { return projectId; }
+    public String getModuleId() { return moduleId; }
+    public String getSubModuleId() { return subModuleId; }
+    public String getEnvironment() { return environment; }
+
+    public Long getTimestamp() { return timestamp; }
+
+    // 🔥 SETTERS
+
+    public void setMessage(String message) { this.message = message; }
+    public void setLevel(String level) { this.level = level; }
+    public void setStackTrace(String stackTrace) { this.stackTrace = stackTrace; }
+
+    public void setProjectId(String projectId) { this.projectId = projectId; }
+    public void setModuleId(String moduleId) { this.moduleId = moduleId; }
+    public void setSubModuleId(String subModuleId) { this.subModuleId = subModuleId; }
+    public void setEnvironment(String environment) { this.environment = environment; }
+
+    public void setTimestamp(Long timestamp) { this.timestamp = timestamp; }
 }

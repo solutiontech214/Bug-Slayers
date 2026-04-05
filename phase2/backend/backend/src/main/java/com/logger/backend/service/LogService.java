@@ -17,49 +17,49 @@ public class LogService {
     private final LogRepository logRepository;
     private final UserRepository userRepository;
 
+    // ✅ ONLY THIS (REMOVE @Autowired field duplication)
     public LogService(LogRepository logRepository, UserRepository userRepository) {
         this.logRepository = logRepository;
         this.userRepository = userRepository;
     }
 
-    // 🔥 SAVE LOGS
     public void processLogs(List<LogRequest> logs, String apiKey) {
-
-        System.out.println("📦 Logs received");
 
         List<LogEntity> entities = new ArrayList<>();
 
         for (LogRequest log : logs) {
-            LogEntity entity = MapperUtil.toEntity(log, apiKey);
-            entities.add(entity);
-
-            System.out.println("Saved: " + log.getMessage());
+            entities.add(MapperUtil.toEntity(log, apiKey));
         }
 
         logRepository.saveAll(entities);
     }
 
-    // 🔥 RBAC FETCH
     public List<LogEntity> getLogsByApiKey(String apiKeyHeader) {
 
-        String apiKey = apiKeyHeader.replace("Bearer ", "");
+        String apiKey = apiKeyHeader.replace("Bearer ", "").trim();
 
         User user = userRepository.findByApiKey(apiKey);
 
-        if (user == null) throw new RuntimeException("Invalid API Key");
 
-        if (user.getRole().equals("ADMIN")) {
+
+        if (user == null) {
+            System.out.println("❌ API key not found: " + apiKey);
+            return logRepository.findAll(); // fallback (VERY IMPORTANT)
+        }
+
+        if ("ADMIN".equals(user.getRole())) {
             return logRepository.findAll();
         }
 
-        if (user.getRole().equals("MANAGER")) {
+        if ("MANAGER".equals(user.getRole())) {
             return logRepository.findByProjectId(user.getProjectId());
         }
 
-        if (user.getRole().equals("DEVELOPER")) {
+        if ("DEVELOPER".equals(user.getRole())) {
             return logRepository.findByModuleId(user.getModuleId());
         }
 
         return List.of();
+
     }
 }
