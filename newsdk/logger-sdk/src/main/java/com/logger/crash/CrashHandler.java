@@ -1,6 +1,7 @@
 package com.logger.crash;
 
 import com.logger.LoggerSDK;
+import com.logger.sender.LogSender;
 
 public class CrashHandler {
 
@@ -15,8 +16,8 @@ public class CrashHandler {
                 // 🔥 Send crash as FATAL log
                 LoggerSDK.fatal("Unhandled exception in thread: " + thread.getName(), throwable);
 
-                // Optional: small delay to allow async send
-                Thread.sleep(1000);
+                // 🔥 Force synchronous flush before JVM dies
+                LogSender.flushNow();
 
             } catch (Exception e) {
                 // Avoid recursive crash

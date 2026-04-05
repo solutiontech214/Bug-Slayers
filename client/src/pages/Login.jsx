@@ -1,69 +1,102 @@
-import React from 'react'
+import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+
+const API = 'http://localhost:8080'
 
 const Login = () => {
-  const [state, setState] = React.useState("login")
+  const navigate = useNavigate()
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
 
-    const [formData, setFormData] = React.useState({
-        name: '',
-        email: '',
-        password: ''
-    })
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setError('')
+    setLoading(true)
 
-    const handleSubmit = (e) => {
-        e.preventDefault()
+    try {
+      const res = await fetch(`${API}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      })
 
+      if (!res.ok) {
+        setError('Invalid email or password')
+        return
+      }
+
+      const data = await res.json()
+      localStorage.setItem('token', data.token)
+      localStorage.setItem('user', JSON.stringify({
+        name: data.name,
+        role: data.role,
+        userId: data.userId
+      }))
+      navigate('/dashboard')
+    } catch (err) {
+      setError('Cannot connect to server. Make sure the backend is running.')
+    } finally {
+      setLoading(false)
     }
+  }
 
-    const handleChange = (e) => {
-        const { name, value } = e.target
-        setFormData(prev => ({ ...prev, [name]: value }))
-    }
-
-    return (
-        <div className='flex items-center justify-center h-screen bg-black bg-[url(https://raw.githubusercontent.com/prebuiltui/prebuiltui/main/assets/hero/green-gradient-bg.svg)] bg-top bg-no-repeat'>
-            <form
-                onSubmit={handleSubmit}
-                className="sm:w-87.5 w-full text-center bg-gray-900 border border-gray-800 rounded-2xl px-8">
-                <h1 className="text-white text-3xl mt-10 font-medium">
-                    {state === "login" ? "Login" : "Sign up"}
-                </h1>
-
-                <p className="text-gray-400 text-sm mt-2">Please sign in to continue</p>
-
-                {state !== "login" && (
-                    <div className="flex items-center mt-6 w-full bg-gray-800 border border-gray-700 h-12 rounded-full overflow-hidden pl-6 gap-2 ">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="text-gray-400" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"> <circle cx="12" cy="8" r="5" /> <path d="M20 21a8 8 0 0 0-16 0" /> </svg>
-                        <input type="text" name="name" placeholder="Name" className="w-full bg-transparent text-white placeholder-gray-400 border-none outline-none " value={formData.name} onChange={handleChange} required />
-                    </div>
-                )}
-
-                <div className="flex items-center w-full mt-4 bg-gray-800 border border-gray-700 h-12 rounded-full overflow-hidden pl-6 gap-2 ">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="text-gray-400" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"> <path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7" /> <rect x="2" y="4" width="20" height="16" rx="2" /> </svg>
-                    <input type="email" name="email" placeholder="Email id" className="w-full bg-transparent text-white placeholder-gray-400 border-none outline-none " value={formData.email} onChange={handleChange} required />
-                </div>
-
-                <div className=" flex items-center mt-4 w-full bg-gray-800 border border-gray-700 h-12 rounded-full overflow-hidden pl-6 gap-2 ">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="text-gray-400" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"> <rect width="18" height="11" x="3" y="11" rx="2" ry="2" /> <path d="M7 11V7a5 5 0 0 1 10 0v4" /> </svg>
-                    <input type="password" name="password" placeholder="Password" className="w-full bg-transparent text-white placeholder-gray-400 border-none outline-none" value={formData.password} onChange={handleChange} required />
-                </div>
-
-                <div className="mt-4 text-left">
-                    <button className="text-sm text-indigo-400 hover:underline">
-                        Forget password?
-                    </button>
-                </div>
-
-                <button type="submit" className="mt-2 w-full h-11 rounded-full text-white bg-indigo-600 hover:bg-indigo-500 transition " >
-                    {state === "login" ? "Login" : "Sign up"}
-                </button>
-
-                <p onClick={() => setState(prev => prev === "login" ? "register" : "login") } className="text-gray-400 text-sm mt-3 mb-11 cursor-pointer" >
-                    {state === "login" ? "Don't have an account?" : "Already have an account?"}
-                    <span className="text-indigo-400 hover:underline ml-1">click here</span>
-                </p>
-            </form>
+  return (
+    <div className="login-page">
+      <div className="login-card">
+        <div className="login-logo">
+          <div className="login-logo-icon">🐛</div>
+          <span className="login-logo-text">BugSlayers</span>
         </div>
-    )
+
+        <h1 className="login-title">Welcome back</h1>
+        <p className="login-sub">Sign in to your developer portal</p>
+
+        {error && <div className="login-error">{error}</div>}
+
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label className="form-label" htmlFor="email">Email address</label>
+            <input
+              id="email"
+              type="email"
+              className="form-input"
+              placeholder="you@company.com"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              required
+              autoComplete="email"
+            />
+          </div>
+
+          <div className="form-group">
+            <label className="form-label" htmlFor="password">Password</label>
+            <input
+              id="password"
+              type="password"
+              className="form-input"
+              placeholder="••••••••"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              required
+              autoComplete="current-password"
+            />
+          </div>
+
+          <button type="submit" className="login-btn" disabled={loading}>
+            {loading ? 'Signing in...' : 'Sign in'}
+          </button>
+        </form>
+
+        <div style={{ marginTop: '20px', paddingTop: '20px', borderTop: '1px solid var(--border)' }}>
+          <p style={{ fontSize: '12px', color: 'var(--text-muted)', textAlign: 'center' }}>
+            Default admin: <code style={{ background: 'var(--bg-secondary)', padding: '1px 5px', borderRadius: '3px' }}>admin@bugslayers.com</code>
+          </p>
+        </div>
+      </div>
+    </div>
+  )
 }
 
 export default Login

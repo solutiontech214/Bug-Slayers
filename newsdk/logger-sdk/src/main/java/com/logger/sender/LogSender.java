@@ -37,6 +37,19 @@ public class LogSender {
         started = true;
     }
 
+    // 🔥 Force immediate sync flush (used by CrashHandler)
+    public static void flushNow() {
+        if (!started) return;
+        List<LogEvent> batch = LogQueue.drain(Integer.MAX_VALUE); // drain all
+        if (batch.isEmpty()) return;
+        try {
+            String json = gson.toJson(batch);
+            HttpClient.send(json, config.getApiKey(), config.getEndpoint());
+        } catch (Exception e) {
+            System.err.println("Failed to synchronously flush logs during crash");
+        }
+    }
+
     // 🔥 Process logs in batch
     private static void processBatch() {
 
