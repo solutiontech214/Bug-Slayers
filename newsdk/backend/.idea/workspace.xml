@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="8d6fef06-4663-494b-bee4-93902508f730" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/../../newsdk.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/compiler.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/encodings.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/jarRepositories.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/newsdk.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../logger-sdk/src/main/java/com/logger/sender/HttpClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/../logger-sdk/src/main/java/com/logger/sender/HttpClient.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../logger-sdk/target/classes/com/logger/LoggerSDK.class" beforeDir="false" afterPath="$PROJECT_DIR$/../logger-sdk/target/classes/com/logger/LoggerSDK.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../logger-sdk/target/classes/com/logger/config/SDKConfig$Builder.class" beforeDir="false" afterPath="$PROJECT_DIR$/../logger-sdk/target/classes/com/logger/config/SDKConfig$Builder.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../logger-sdk/target/classes/com/logger/config/SDKConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/../logger-sdk/target/classes/com/logger/config/SDKConfig.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../logger-sdk/target/classes/com/logger/crash/CrashHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/../logger-sdk/target/classes/com/logger/crash/CrashHandler.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../logger-sdk/target/classes/com/logger/model/LogEvent.class" beforeDir="false" afterPath="$PROJECT_DIR$/../logger-sdk/target/classes/com/logger/model/LogEvent.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../logger-sdk/target/classes/com/logger/model/LogLevel.class" beforeDir="false" afterPath="$PROJECT_DIR$/../logger-sdk/target/classes/com/logger/model/LogLevel.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../logger-sdk/target/classes/com/logger/queue/LogQueue.class" beforeDir="false" afterPath="$PROJECT_DIR$/../logger-sdk/target/classes/com/logger/queue/LogQueue.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../logger-sdk/target/classes/com/logger/sender/HttpClient.class" beforeDir="false" afterPath="$PROJECT_DIR$/../logger-sdk/target/classes/com/logger/sender/HttpClient.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../logger-sdk/target/classes/com/logger/sender/LogSender.class" beforeDir="false" afterPath="$PROJECT_DIR$/../logger-sdk/target/classes/com/logger/sender/LogSender.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../logger-sdk/target/classes/com/logger/util/StackTraceUtil.class" beforeDir="false" afterPath="$PROJECT_DIR$/../logger-sdk/target/classes/com/logger/util/StackTraceUtil.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../logger-sdk/target/logger-sdk-1.0.0.jar" beforeDir="false" afterPath="$PROJECT_DIR$/../logger-sdk/target/logger-sdk-1.0.0.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../logger-sdk/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/../logger-sdk/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../test-app/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/../test-app/Main.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../test-app/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/../test-app/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../test-app/lib/logger-sdk-1.0.0.jar" beforeDir="false" afterPath="$PROJECT_DIR$/../test-app/lib/logger-sdk-1.0.0.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../phase2.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../phase2/backend/backend.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../phase2/backend/backend/app.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../phase2/backend/backend/app2.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../phase2/backend/backend/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../phase2/backend/backend/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../phase2/backend/backend/src/main/java/com/logger/backend/BackendApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../phase2/backend/backend/src/main/java/com/logger/backend/BackendApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../phase2/backend/backend/src/main/java/com/logger/backend/config/CorsConfig.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../phase2/backend/backend/src/main/java/com/logger/backend/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../phase2/backend/backend/src/main/java/com/logger/backend/config/SecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../phase2/backend/backend/src/main/java/com/logger/backend/controller/LogController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../phase2/backend/backend/src/main/java/com/logger/backend/controller/LogController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../phase2/backend/backend/src/main/java/com/logger/backend/dto/LogRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../phase2/backend/backend/src/main/java/com/logger/backend/dto/LogRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../phase2/backend/backend/src/main/java/com/logger/backend/model/LogEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../phase2/backend/backend/src/main/java/com/logger/backend/model/LogEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../phase2/backend/backend/src/main/java/com/logger/backend/repository/LogRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../phase2/backend/backend/src/main/java/com/logger/backend/repository/LogRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../phase2/backend/backend/src/main/java/com/logger/backend/service/LogService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../phase2/backend/backend/src/main/java/com/logger/backend/service/LogService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../phase2/backend/backend/src/main/java/com/logger/backend/util/MapperUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../phase2/backend/backend/src/main/java/com/logger/backend/util/MapperUtil.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../phase2/backend/backend/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/../../phase2/backend/backend/src/main/resources/application.properties" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 1,
+  "fromUser": false
+}]]></component>
+  <component name="ProjectId" id="3BvcrNWBZWhQQZNsaMvasrtfVlb" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "codeWithMe.voiceChat.enabledByDefault": "false",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
+    "git-widget-placeholder": "2736346c",
+    "junie.onboarding.icon.badge.shown": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "D:/MERN Project/Bug-Slayers/newsdk/backend",
+    "nodejs_package_manager_path": "npm",
+    "to.speed.mode.migration.done": "true",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="8d6fef06-4663-494b-bee4-93902508f730" name="Changes" comment="" />
+      <created>1775373183871</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1775373183871</updated>
+      <workItem from="1775373186142" duration="87000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>
