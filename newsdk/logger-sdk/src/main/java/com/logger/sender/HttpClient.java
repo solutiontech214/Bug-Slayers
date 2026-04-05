@@ -23,7 +23,7 @@ public class HttpClient {
             conn.setDoOutput(true);
 
             try (OutputStream os = conn.getOutputStream()) {
-                os.write(jsonPayload.getBytes());
+                os.write(jsonPayload.getBytes("UTF-8"));
                 os.flush();
             }
 
