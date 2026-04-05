@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import Sidebar from '../components/Sidebar'
+import { useAuth } from '../context/AuthContext'
 
 const API = 'http://localhost:8080'
 
@@ -12,7 +13,14 @@ const Dashboard = () => {
   const [stats, setStats] = useState({ INFO: 0, WARN: 0, ERROR: 0, FATAL: 0 })
   const [recentLogs, setRecentLogs] = useState([])
   const [loading, setLoading] = useState(true)
-  const user = JSON.parse(localStorage.getItem('user') || '{}')
+  const { user, role } = useAuth()
+
+  const ROLE_META = {
+    GLOBAL_ADMIN: { label: 'Admin', color: '#fb923c', icon: '👑' },
+    PROJECT_MANAGER: { label: 'Manager', color: '#38bdf8', icon: '📋' },
+    DEVELOPER: { label: 'Developer', color: '#4ade80', icon: '💻' },
+  }
+  const roleMeta = ROLE_META[role] || { label: role, color: 'var(--text-muted)', icon: '👤' }
 
   useEffect(() => {
     const fetchData = async () => {
@@ -74,13 +82,25 @@ const Dashboard = () => {
 
         <div className="page-body">
           {/* Welcome */}
-          <div style={{ marginBottom: '24px' }}>
-            <h2 style={{ fontSize: '20px', fontWeight: '700', marginBottom: '4px' }}>
-              Good {new Date().getHours() < 12 ? 'morning' : 'afternoon'}, {user.name?.split(' ')[0] || 'Developer'} 👋
-            </h2>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '13px' }}>
-              Here's an overview of your log platform activity.
-            </p>
+          <div style={{ marginBottom: '24px', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px' }}>
+            <div>
+              <h2 style={{ fontSize: '20px', fontWeight: '700', marginBottom: '4px' }}>
+                Good {new Date().getHours() < 12 ? 'morning' : 'afternoon'}, {user.name?.split(' ')[0] || 'Developer'} 👋
+              </h2>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '13px' }}>
+                Here's an overview of your log platform activity.
+              </p>
+            </div>
+            <div style={{
+              display: 'inline-flex', alignItems: 'center', gap: '6px',
+              background: `${roleMeta.color}18`, color: roleMeta.color,
+              border: `1px solid ${roleMeta.color}33`,
+              padding: '6px 14px', borderRadius: '8px',
+              fontSize: '12px', fontWeight: 600,
+            }}>
+              <span>{roleMeta.icon}</span>
+              <span>{roleMeta.label}</span>
+            </div>
           </div>
 
           {/* Stat Cards */}
@@ -131,7 +151,7 @@ const Dashboard = () => {
               {[
                 { label: 'Total Logs', value: totalLogs.toLocaleString() },
                 { label: 'Error Rate', value: `${errorRate}%`, highlight: parseFloat(errorRate) > 5 },
-                { label: 'Your Role', value: (user.role || '').replace('_', ' ') },
+                { label: 'Your Role', value: roleMeta.label },
               ].map(item => (
                 <div key={item.label} style={{
                   display: 'flex', justifyContent: 'space-between', alignItems: 'center',

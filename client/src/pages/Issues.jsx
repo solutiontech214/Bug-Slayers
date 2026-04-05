@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import Sidebar from '../components/Sidebar'
+import RoleGuard from '../components/RoleGuard'
+import { useAuth } from '../context/AuthContext'
 
 const API = 'http://localhost:8080'
 
@@ -16,7 +18,9 @@ const Issues = () => {
   const [totalElements, setTotalElements] = useState(0)
   const [selectedIssue, setSelectedIssue] = useState(null)
   const [updating, setUpdating] = useState(false)
-  const user = JSON.parse(localStorage.getItem('user') || '{}')
+  const { user, can } = useAuth()
+  const canUpdate = can('issues:update')
+  const canResolve = can('issues:resolve')
 
   const fetchIssues = useCallback(async () => {
     setLoading(true)
@@ -91,9 +95,18 @@ const Issues = () => {
       <div className="main-content">
         <div className="topbar">
           <span className="topbar-title">Issues</span>
-          <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
-            {totalElements > 0 ? `${totalElements} total` : 'Auto-created from ERROR/FATAL logs'}
-          </span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            {!canUpdate && (
+              <span style={{
+                fontSize: '11px', background: 'rgba(56,189,248,0.1)',
+                color: '#38bdf8', border: '1px solid rgba(56,189,248,0.25)',
+                padding: '3px 10px', borderRadius: '6px', fontWeight: 600,
+              }}>👁 Read-only mode</span>
+            )}
+            <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+              {totalElements > 0 ? `${totalElements} total` : 'Auto-created from ERROR/FATAL logs'}
+            </span>
+          </div>
         </div>
 
         <div className="page-body">
@@ -158,7 +171,7 @@ const Issues = () => {
                       </td>
                       <td><span className="log-time">{formatTime(issue.createdAt)}</span></td>
                       <td onClick={e => e.stopPropagation()}>
-                        {issue.status !== 'RESOLVED' && (
+                        {canResolve && issue.status !== 'RESOLVED' && (
                           <button
                             className="btn btn-success"
                             style={{ padding: '4px 8px', fontSize: '11px' }}
@@ -167,6 +180,9 @@ const Issues = () => {
                           >
                             Resolve
                           </button>
+                        )}
+                        {!canResolve && (
+                          <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>—</span>
                         )}
                       </td>
                     </tr>
@@ -229,9 +245,9 @@ const Issues = () => {
               </div>
             )}
 
-            {selectedIssue.status !== 'RESOLVED' && (
+            {selectedIssue.status !== 'RESOLVED' && canUpdate && (
               <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
-                {selectedIssue.status === 'OPEN' && (
+                {selectedIssue.status === 'OPEN' && canUpdate && (
                   <button
                     className="btn btn-ghost"
                     onClick={() => handleMarkInProgress(selectedIssue)}
@@ -240,13 +256,24 @@ const Issues = () => {
                     Mark In Progress
                   </button>
                 )}
-                <button
-                  className="btn btn-success"
-                  onClick={() => handleResolve(selectedIssue)}
-                  disabled={updating}
-                >
-                  ✓ Mark Resolved
-                </button>
+                {canResolve && (
+                  <button
+                    className="btn btn-success"
+                    onClick={() => handleResolve(selectedIssue)}
+                    disabled={updating}
+                  >
+                    ✓ Mark Resolved
+                  </button>
+                )}
+              </div>
+            )}
+            {!canUpdate && selectedIssue.status !== 'RESOLVED' && (
+              <div style={{
+                background: 'rgba(56,189,248,0.08)', border: '1px solid rgba(56,189,248,0.2)',
+                color: '#38bdf8', padding: '10px 14px', borderRadius: '8px',
+                fontSize: '12px', textAlign: 'center',
+              }}>
+                👁 You have read-only access. Contact a Manager or Admin to update this issue.
               </div>
             )}
           </div>

@@ -25,10 +25,34 @@ public class DatabaseInitializer {
                 User admin = new User();
                 admin.setName("System Admin");
                 admin.setEmail(adminEmail);
-                admin.setPassword(passwordEncoder.encode("admin123")); // Default password
+                admin.setPassword(passwordEncoder.encode("admin123"));
                 admin.setRole(User.Role.GLOBAL_ADMIN);
                 userRepository.save(admin);
                 System.out.println("✅ Default Admin Created: admin@bugslayers.com / admin123");
+            }
+
+            // 2. Create Default Project Manager
+            String managerEmail = "manager@bugslayers.com";
+            if (!userRepository.existsByEmail(managerEmail)) {
+                User manager = new User();
+                manager.setName("Project Manager");
+                manager.setEmail(managerEmail);
+                manager.setPassword(passwordEncoder.encode("admin123"));
+                manager.setRole(User.Role.PROJECT_MANAGER);
+                userRepository.save(manager);
+                System.out.println("✅ Default Manager Created: manager@bugslayers.com / admin123");
+            }
+
+            // 3. Create Default Developer
+            String devEmail = "dev@bugslayers.com";
+            if (!userRepository.existsByEmail(devEmail)) {
+                User dev = new User();
+                dev.setName("Dev User");
+                dev.setEmail(devEmail);
+                dev.setPassword(passwordEncoder.encode("admin123"));
+                dev.setRole(User.Role.DEVELOPER);
+                userRepository.save(dev);
+                System.out.println("✅ Default Developer Created: dev@bugslayers.com / admin123");
             }
 
             // 2. Setup PostgreSQL Full-Text Search Vector if needed

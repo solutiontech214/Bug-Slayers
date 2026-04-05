@@ -90,8 +90,29 @@ const Login = () => {
         </form>
 
         <div style={{ marginTop: '20px', paddingTop: '20px', borderTop: '1px solid var(--border)' }}>
-          <p style={{ fontSize: '12px', color: 'var(--text-muted)', textAlign: 'center' }}>
-            Default admin: <code style={{ background: 'var(--bg-secondary)', padding: '1px 5px', borderRadius: '3px' }}>admin@bugslayers.com</code>
+          <p style={{ fontSize: '11px', color: 'var(--text-muted)', textAlign: 'center', marginBottom: '10px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.8px' }}>
+            Default Accounts
+          </p>
+          {[
+            { role: 'Admin', icon: '👑', color: '#fb923c', email: 'admin@bugslayers.com' },
+            { role: 'Manager', icon: '📋', color: '#38bdf8', email: 'manager@bugslayers.com' },
+            { role: 'Developer', icon: '💻', color: '#4ade80', email: 'dev@bugslayers.com' },
+          ].map(({ role, icon, color, email }) => (
+            <div key={role} style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              padding: '6px 10px', borderRadius: '6px',
+              background: 'var(--bg-secondary)', marginBottom: '6px',
+            }}>
+              <span style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', color, fontWeight: 600 }}>
+                {icon} {role}
+              </span>
+              <code style={{ fontSize: '10px', color: 'var(--text-muted)', background: 'var(--bg-primary)', padding: '2px 6px', borderRadius: '3px' }}>
+                {email}
+              </code>
+            </div>
+          ))}
+          <p style={{ fontSize: '10px', color: 'var(--text-muted)', textAlign: 'center', marginTop: '8px' }}>
+            Password: <code style={{ background: 'var(--bg-secondary)', padding: '1px 5px', borderRadius: '3px' }}>admin123</code>
           </p>
         </div>
       </div>
