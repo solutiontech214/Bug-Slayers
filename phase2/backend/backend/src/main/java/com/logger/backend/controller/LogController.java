@@ -28,7 +28,6 @@ public class LogController {
     public String health() {
         return "Log Aggregation Platform — RUNNING";
     }
-
     // ✅ SDK Ingestion — single log
     @PostMapping
     public ResponseEntity<String> receiveLog(@RequestBody LogRequest request,

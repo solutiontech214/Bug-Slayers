@@ -55,6 +55,5 @@ public class LogEntity {
 
     // NOTE: GIN index on search_vector is created via SQL script (schema.sql)
     // PostgreSQL Full-Text Search vector column
-    @Column(name = "search_vector", columnDefinition = "tsvector")
-    private String searchVector;
+
 }
