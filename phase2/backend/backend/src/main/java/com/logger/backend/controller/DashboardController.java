@@ -21,9 +21,16 @@ public class DashboardController {
     public List<LogEntity> getLogs(
             @RequestHeader(value = "Authorization", required = false) String apiKey
     ) {
+<<<<<<< Updated upstream
         if (apiKey == null) {
             apiKey = "Bearer sk_admin"; // default for testing
         }
         return logService.getLogsByApiKey(apiKey);
     }
+=======
+        return logService.getLogsByApiKey(header);
+    }
+
+
+>>>>>>> Stashed changes
 }
