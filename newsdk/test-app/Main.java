@@ -12,7 +12,7 @@ public class Main {
                 .moduleId("auth-module")
                 .subModuleId("login-api")
                 .environment("development")
-                .endpoint("http://localhost:8080/logs")
+                .endpoint("http://localhost:8080/logs/batch")
                 .batchSize(5)
                 .flushIntervalSeconds(3)
                 .build();

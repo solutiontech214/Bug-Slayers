@@ -36,42 +36,30 @@ public class LogService {
 
     public List<LogEntity> getLogsByApiKey(String apiKeyHeader) {
 
-        System.out.println("Header: " + apiKeyHeader);
-
-        if (apiKeyHeader == null) {
-            return logRepository.findAll();
-        }
-
         String apiKey = apiKeyHeader.replace("Bearer ", "").trim();
-
-        System.out.println("Processed Key: " + apiKey);
 
         User user = userRepository.findByApiKey(apiKey);
 
-        System.out.println("User: " + user);
 
-        // 🔥 IMPORTANT FIX
+
         if (user == null) {
-            System.out.println("❌ No user found");
+            System.out.println("❌ API key not found: " + apiKey);
+            return logRepository.findAll(); // fallback (VERY IMPORTANT)
+        }
+
+        if ("ADMIN".equals(user.getRole())) {
             return logRepository.findAll();
         }
 
-        System.out.println("Role: " + user.getRole());
-
-        // 🔥 FORCE ADMIN CHECK FIRST
-        if ("ADMIN".equalsIgnoreCase(user.getRole())) {
-            System.out.println("✅ ADMIN access");
-            return logRepository.findAll();
-        }
-
-        if ("MANAGER".equalsIgnoreCase(user.getRole())) {
+        if ("MANAGER".equals(user.getRole())) {
             return logRepository.findByProjectId(user.getProjectId());
         }
 
-        if ("DEVELOPER".equalsIgnoreCase(user.getRole())) {
+        if ("DEVELOPER".equals(user.getRole())) {
             return logRepository.findByModuleId(user.getModuleId());
         }
 
-        return logRepository.findAll(); // fallback
+        return List.of();
+
     }
 }

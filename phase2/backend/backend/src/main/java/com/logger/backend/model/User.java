@@ -13,25 +13,16 @@ public class User {
     private String name;
     private String email;
 
-    @Column(name = "api_key")
+    @Column(unique = true)
     private String apiKey;
 
-    private String role;
+    private String role; // ADMIN, MANAGER, DEVELOPER
 
-    @Column(name = "project_id")
     private String projectId;
-
-    @Column(name = "module_id")
     private String moduleId;
 
-    // GETTERS + SETTERS
+    // getters & setters
     public Long getId() { return id; }
-
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
-
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
 
     public String getApiKey() { return apiKey; }
     public void setApiKey(String apiKey) { this.apiKey = apiKey; }
