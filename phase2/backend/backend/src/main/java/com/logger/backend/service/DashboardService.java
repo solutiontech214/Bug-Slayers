@@ -6,7 +6,8 @@ import com.logger.backend.repository.LogRepository;
 import com.logger.backend.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class DashboardService {
@@ -19,35 +20,65 @@ public class DashboardService {
         this.userRepository = userRepository;
     }
 
-    public List<LogEntity> getLogs(String authHeader) {
+    public User getUser(String authHeader) {
 
-        if (authHeader == null) return logRepository.findAll();
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new RuntimeException("Missing Authorization header");
+        }
 
         String apiKey = authHeader.replace("Bearer ", "").trim();
 
         User user = userRepository.findByApiKey(apiKey);
 
-        if (user == null) return logRepository.findAll();
+        if (user == null) {
+            throw new RuntimeException("Invalid API key");
+        }
 
+        return user;
+    }
+
+    // 🔥 LOGS
+    public List<LogEntity> getLogs(String authHeader) {
+
+        // If no auth header, return all logs (unauthenticated admin view)
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return logRepository.findAll();
+        }
+
+        User user = getUser(authHeader);
         String role = user.getRole();
 
-        System.out.println("ROLE: " + role);
-
-        // 🔥 ADMIN
         if ("ADMIN".equalsIgnoreCase(role)) {
             return logRepository.findAll();
         }
 
-        // 🔥 MANAGER
         if ("MANAGER".equalsIgnoreCase(role)) {
             return logRepository.findByProjectId(user.getProjectId());
         }
 
-        // 🔥 DEVELOPER
         if ("DEVELOPER".equalsIgnoreCase(role)) {
-            return logRepository.findByModuleId(user.getModuleId());
+            return logRepository.findByProjectIdAndModuleId(
+                    user.getProjectId(),
+                    user.getModuleId()
+            );
         }
 
-        return logRepository.findAll();
+        throw new RuntimeException("Invalid role");
+    }
+
+    // 🔥 SUMMARY
+    public Map<String, Long> getSummary(String authHeader) {
+        return getLogs(authHeader).stream()
+                .collect(Collectors.groupingBy(
+                        LogEntity::getLevel,
+                        Collectors.counting()
+                ));
+    }
+
+    // 🔥 SIDEBAR
+    public Set<String> getSidebar(String authHeader) {
+        return getLogs(authHeader).stream()
+                .map(LogEntity::getProjectId)
+                .collect(Collectors.toSet());
     }
 }

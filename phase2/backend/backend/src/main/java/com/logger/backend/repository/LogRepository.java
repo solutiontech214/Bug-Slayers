@@ -10,4 +10,5 @@ public interface LogRepository extends JpaRepository<LogEntity, Long> {
     List<LogEntity> findByProjectId(String projectId);
 
     List<LogEntity> findByModuleId(String moduleId);
+    List<LogEntity> findByProjectIdAndModuleId(String projectId, String moduleId);
 }

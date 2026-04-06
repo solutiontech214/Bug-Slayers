@@ -2,9 +2,11 @@ package com.logger.backend.controller;
 
 import com.logger.backend.model.LogEntity;
 import com.logger.backend.model.User;
+import com.logger.backend.service.DashboardService;
 import com.logger.backend.service.LogService;
 import com.logger.backend.repository.UserRepository;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,32 +16,30 @@ import java.util.List;
 @CrossOrigin
 public class DashboardController {
 
-    private final LogService logService;
-    private final UserRepository userRepository;
+    private final DashboardService dashboardService;
 
-    // 🔥 CONSTRUCTOR (IMPORTANT)
-    public DashboardController(LogService logService, UserRepository userRepository) {
-        this.logService = logService;
-        this.userRepository = userRepository;
+    public DashboardController(DashboardService dashboardService) {
+        this.dashboardService = dashboardService;
     }
 
-    // 🔥 GET LOGS (RBAC handled inside service)
     @GetMapping("/logs")
-    public List<LogEntity> getLogs(
-            @RequestHeader(value = "Authorization", required = false) String header
+    public ResponseEntity<?> getLogs(
+            @RequestHeader(value = "Authorization", required = false) String authHeader
     ) {
-        return logService.getLogsByApiKey(header);
+        return ResponseEntity.ok(dashboardService.getLogs(authHeader));
     }
 
-    // 🔥 GET USER (FOR FRONTEND ROLE DISPLAY)
-    @GetMapping("/me")
-    public User getUser(
-            @RequestHeader(value = "Authorization", required = false) String header
+    @GetMapping("/summary")
+    public ResponseEntity<?> getSummary(
+            @RequestHeader(value = "Authorization", required = false) String authHeader
     ) {
-        if (header == null) return null;
+        return ResponseEntity.ok(dashboardService.getSummary(authHeader));
+    }
 
-        String apiKey = header.replace("Bearer ", "").trim();
-
-        return userRepository.findByApiKey(apiKey);
+    @GetMapping("/sidebar")
+    public ResponseEntity<?> getSidebar(
+            @RequestHeader(value = "Authorization", required = false) String authHeader
+    ) {
+        return ResponseEntity.ok(dashboardService.getSidebar(authHeader));
     }
 }
